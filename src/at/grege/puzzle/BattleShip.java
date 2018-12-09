@@ -5,7 +5,7 @@ import java.util.Collection;
 /**
  * Created by Gerhard on 05.01.2017.
  */
-public class Bimaru {
+public class BattleShip {
 
     Collection<ShipPart> startShipParts;
     private int maxRow;
@@ -16,7 +16,7 @@ public class Bimaru {
     private int col[];
     private boolean start = false;
 
-    public Bimaru(int[] row, int[] col, int maxShipSize) {
+    public BattleShip(int[] row, int[] col, int maxShipSize) {
         setRow(row);
         setMaxRow(row.length);
         setCol(col);
@@ -91,7 +91,7 @@ public class Bimaru {
         start = true;
         for (ShipPart shipPart : shipParts) {
             try {
-                setShipAndWater(shipPart.getRow(), shipPart.getCol(), shipPart.getChr(), false);
+                setShipAndWater(shipPart.getRow(), shipPart.getCol(), shipPart.getChr());
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 //e.printStackTrace();
@@ -105,9 +105,9 @@ public class Bimaru {
             for (int i = 0; i < getMaxRow(); i++) {
                 for (int j = 0; j < getMaxCol(); j++) {
                     try {
-                        fillField(i, j, ' ', false);
+                        fillField(i, j, ' ');
                     } catch (Exception e) {
-
+                        // do noting
                     }
                 }
             }
@@ -120,9 +120,9 @@ public class Bimaru {
             if (getCol()[i] == 0) {
                 for (int j = 0; j < getMaxRow(); j++) {
                     try {
-                        fillField(j, i, '~', false);
+                        fillField(j, i, '~');
                     } catch (Exception e) {
-
+                        // do noting
                     }
                 }
             }
@@ -131,9 +131,9 @@ public class Bimaru {
             if (getRow()[i] == 0) {
                 for (int j = 0; j < getMaxCol(); j++) {
                     try {
-                        fillField(i, j, '~', false);
+                        fillField(i, j, '~');
                     } catch (Exception e) {
-
+                        // do noting
                     }
                 }
             }
@@ -168,7 +168,6 @@ public class Bimaru {
             }
         }
         for (int i = 0; i < grid.length; i++) {
-//            if ((horizontal ? grid[row][i] : grid[i][col]) == '#' || ((horizontal ? grid[row][i] : grid[i][col]) == '*'))
             if ((horizontal ? isShip(row, i) : isShip(i, col)) || ((horizontal ? grid[row][i] : grid[i][col]) == '*'))
                 count++;
         }
@@ -178,37 +177,26 @@ public class Bimaru {
             if ((horizontal ? grid[row][col + i] : grid[row + i][col]) == '*') count = 0;
             else count = 1;
             for (int j = 0; j < grid.length; j++) {
-//                if ((horizontal ? grid[j][col + i] : grid[row + i][j]) == '#' || (horizontal ? grid[j][col + i] : grid[row + i][j]) == '*')
                 if ((horizontal ? isShip(j, col + i) : isShip(row + i, j)) || (horizontal ? grid[j][col + i] : grid[row + i][j]) == '*')
                     count++;
             }
             if (count > (horizontal ? this.col[col + i] : this.row[row + i])) return false;
         }
 
-//        for (int i = 0; i < size; i++) {
-//            if (horizontal) {
-//                this.grid[row][col + i] = '#';
-//            } else {
-//                this.grid[row + i][col] = '#';
-//            }
-//        }
-
-//        for (int i = 0; i < size; i++) {
-            if (size == 1) this.grid[row][col] = 'O';
-            else if (horizontal) {
-                this.grid[row][col] = '<';
-                for (int j = 1; j < size - 1; j++) {
-                    this.grid[row][col + j] = '-';
-                }
-                this.grid[row][col + size - 1] = '>';
-            } else {
-                this.grid[row][col] = 'A';
-                for (int j = 1; j < size - 1; j++) {
-                    this.grid[row + j][col] = '|';
-                }
-                this.grid[row + size - 1][col] = 'V';
+        if (size == 1) this.grid[row][col] = 'O';
+        else if (horizontal) {
+            this.grid[row][col] = '<';
+            for (int j = 1; j < size - 1; j++) {
+                this.grid[row][col + j] = '-';
             }
-//        }
+            this.grid[row][col + size - 1] = '>';
+        } else {
+            this.grid[row][col] = 'A';
+            for (int j = 1; j < size - 1; j++) {
+                this.grid[row + j][col] = '|';
+            }
+            this.grid[row + size - 1][col] = 'V';
+        }
         //System.out.println("placeShip: " + (horizontal ? "hor," : "ver,") + row + "," + col + "," + size);
         //Main.printGrid(this);
 
@@ -226,7 +214,6 @@ public class Bimaru {
     private boolean isSet(int row, int col) {
         if (row < 0 || row >= grid.length || col < 0 || col >= grid.length) return false;
 
-//        if (grid[row][col] == '#' || grid[row][col] == '~') return true;
         if (isShip(row, col) || grid[row][col] == '~') return true;
 
         return false;
@@ -244,7 +231,7 @@ public class Bimaru {
         placeStartParts();
     }
 
-    public void setShipAndWater(int row, int col, char chr, boolean reset) throws Exception {
+    public void setShipAndWater(int row, int col, char chr) throws Exception {
 
         if (row < 0) throw new Exception("row must not lower than 0, but is " + row);
         if (row >= getMaxRow())
@@ -255,118 +242,117 @@ public class Bimaru {
 
         switch (chr) {
             case 'A':
-                fillField(row - 1, col - 1, '~', reset);
-                fillField(row - 1, col + 0, '~', reset);
-                fillField(row - 1, col + 1, '~', reset);
-                fillField(row + 0, col - 1, '~', reset);
-                fillField(row + 0, col + 0, chr, reset);
-                fillField(row + 0, col + 1, '~', reset);
-                fillField(row + 1, col - 1, '~', reset);
-                fillField(row + 1, col + 0, '*', reset);
-                fillField(row + 1, col + 1, '~', reset);
-                fillField(row + 2, col - 1, '~', reset);
-                fillField(row + 2, col + 1, '~', reset);
+                fillField(row - 1, col - 1, '~');
+                fillField(row - 1, col + 0, '~');
+                fillField(row - 1, col + 1, '~');
+                fillField(row + 0, col - 1, '~');
+                fillField(row + 0, col + 0, chr);
+                fillField(row + 0, col + 1, '~');
+                fillField(row + 1, col - 1, '~');
+                fillField(row + 1, col + 0, '*');
+                fillField(row + 1, col + 1, '~');
+                fillField(row + 2, col - 1, '~');
+                fillField(row + 2, col + 1, '~');
                 break;
             case '|':
-                fillField(row - 2, col - 1, '~', reset);
-                fillField(row - 2, col + 1, '~', reset);
-                fillField(row - 1, col - 1, '~', reset);
-                fillField(row - 1, col + 0, '*', reset);
-                fillField(row - 1, col + 1, '~', reset);
-                fillField(row + 0, col - 1, '~', reset);
-                fillField(row + 0, col + 0, chr, reset);
-                fillField(row + 0, col + 1, '~', reset);
-                fillField(row + 1, col - 1, '~', reset);
-                fillField(row + 1, col + 0, '*', reset);
-                fillField(row + 1, col + 1, '~', reset);
-                fillField(row + 2, col - 1, '~', reset);
-                fillField(row + 2, col + 1, '~', reset);
+                fillField(row - 2, col - 1, '~');
+                fillField(row - 2, col + 1, '~');
+                fillField(row - 1, col - 1, '~');
+                fillField(row - 1, col + 0, '*');
+                fillField(row - 1, col + 1, '~');
+                fillField(row + 0, col - 1, '~');
+                fillField(row + 0, col + 0, chr);
+                fillField(row + 0, col + 1, '~');
+                fillField(row + 1, col - 1, '~');
+                fillField(row + 1, col + 0, '*');
+                fillField(row + 1, col + 1, '~');
+                fillField(row + 2, col - 1, '~');
+                fillField(row + 2, col + 1, '~');
                 break;
             case 'V':
-                fillField(row - 2, col - 1, '~', reset);
-                fillField(row - 2, col + 1, '~', reset);
-                fillField(row - 1, col - 1, '~', reset);
-                fillField(row - 1, col + 0, '*', reset);
-                fillField(row - 1, col + 1, '~', reset);
-                fillField(row + 0, col - 1, '~', reset);
-                fillField(row + 0, col + 0, chr, reset);
-                fillField(row + 0, col + 1, '~', reset);
-                fillField(row + 1, col - 1, '~', reset);
-                fillField(row + 1, col + 0, '~', reset);
-                fillField(row + 1, col + 1, '~', reset);
+                fillField(row - 2, col - 1, '~');
+                fillField(row - 2, col + 1, '~');
+                fillField(row - 1, col - 1, '~');
+                fillField(row - 1, col + 0, '*');
+                fillField(row - 1, col + 1, '~');
+                fillField(row + 0, col - 1, '~');
+                fillField(row + 0, col + 0, chr);
+                fillField(row + 0, col + 1, '~');
+                fillField(row + 1, col - 1, '~');
+                fillField(row + 1, col + 0, '~');
+                fillField(row + 1, col + 1, '~');
                 break;
             case 'O':
-                fillField(row - 1, col - 1, '~', reset);
-                fillField(row - 1, col + 0, '~', reset);
-                fillField(row - 1, col + 1, '~', reset);
-                fillField(row + 0, col - 1, '~', reset);
-                fillField(row + 0, col + 0, chr, reset);
-                fillField(row + 0, col + 1, '~', reset);
-                fillField(row + 1, col - 1, '~', reset);
-                fillField(row + 1, col + 0, '~', reset);
-                fillField(row + 1, col + 1, '~', reset);
+                fillField(row - 1, col - 1, '~');
+                fillField(row - 1, col + 0, '~');
+                fillField(row - 1, col + 1, '~');
+                fillField(row + 0, col - 1, '~');
+                fillField(row + 0, col + 0, chr);
+                fillField(row + 0, col + 1, '~');
+                fillField(row + 1, col - 1, '~');
+                fillField(row + 1, col + 0, '~');
+                fillField(row + 1, col + 1, '~');
                 break;
             case '#':
-                fillField(row - 1, col - 1, '~', reset);
-                fillField(row - 1, col + 1, '~', reset);
-                fillField(row + 0, col + 0, chr, reset);
-                fillField(row + 1, col - 1, '~', reset);
-                fillField(row + 1, col + 1, '~', reset);
+                fillField(row - 1, col - 1, '~');
+                fillField(row - 1, col + 1, '~');
+                fillField(row + 0, col + 0, chr);
+                fillField(row + 1, col - 1, '~');
+                fillField(row + 1, col + 1, '~');
                 break;
             case '<':
-                fillField(row - 1, col - 1, '~', reset);
-                fillField(row - 1, col + 0, '~', reset);
-                fillField(row - 1, col + 1, '~', reset);
-                fillField(row - 1, col + 2, '~', reset);
-                fillField(row + 0, col - 1, '~', reset);
-                fillField(row + 0, col + 0, chr, reset);
-                fillField(row + 0, col + 1, '*', reset);
-                fillField(row + 1, col - 1, '~', reset);
-                fillField(row + 1, col + 0, '~', reset);
-                fillField(row + 1, col + 1, '~', reset);
-                fillField(row + 1, col + 2, '~', reset);
+                fillField(row - 1, col - 1, '~');
+                fillField(row - 1, col + 0, '~');
+                fillField(row - 1, col + 1, '~');
+                fillField(row - 1, col + 2, '~');
+                fillField(row + 0, col - 1, '~');
+                fillField(row + 0, col + 0, chr);
+                fillField(row + 0, col + 1, '*');
+                fillField(row + 1, col - 1, '~');
+                fillField(row + 1, col + 0, '~');
+                fillField(row + 1, col + 1, '~');
+                fillField(row + 1, col + 2, '~');
                 break;
             case '-':
-                fillField(row - 1, col - 2, '~', reset);
-                fillField(row - 1, col - 1, '~', reset);
-                fillField(row - 1, col + 0, '~', reset);
-                fillField(row - 1, col + 1, '~', reset);
-                fillField(row - 1, col + 2, '~', reset);
-                fillField(row + 0, col - 1, '*', reset);
-                fillField(row + 0, col + 0, chr, reset);
-                fillField(row + 0, col + 1, '*', reset);
-                fillField(row + 1, col - 2, '~', reset);
-                fillField(row + 1, col - 1, '~', reset);
-                fillField(row + 1, col + 0, '~', reset);
-                fillField(row + 1, col + 1, '~', reset);
-                fillField(row + 1, col + 2, '~', reset);
+                fillField(row - 1, col - 2, '~');
+                fillField(row - 1, col - 1, '~');
+                fillField(row - 1, col + 0, '~');
+                fillField(row - 1, col + 1, '~');
+                fillField(row - 1, col + 2, '~');
+                fillField(row + 0, col - 1, '*');
+                fillField(row + 0, col + 0, chr);
+                fillField(row + 0, col + 1, '*');
+                fillField(row + 1, col - 2, '~');
+                fillField(row + 1, col - 1, '~');
+                fillField(row + 1, col + 0, '~');
+                fillField(row + 1, col + 1, '~');
+                fillField(row + 1, col + 2, '~');
                 break;
             case '>':
-                fillField(row - 1, col - 2, '~', reset);
-                fillField(row - 1, col - 1, '~', reset);
-                fillField(row - 1, col + 0, '~', reset);
-                fillField(row - 1, col + 1, '~', reset);
-                fillField(row + 0, col - 1, '*', reset);
-                fillField(row + 0, col + 0, chr, reset);
-                fillField(row + 0, col + 1, '~', reset);
-                fillField(row + 1, col - 2, '~', reset);
-                fillField(row + 1, col - 1, '~', reset);
-                fillField(row + 1, col + 0, '~', reset);
-                fillField(row + 1, col + 1, '~', reset);
+                fillField(row - 1, col - 2, '~');
+                fillField(row - 1, col - 1, '~');
+                fillField(row - 1, col + 0, '~');
+                fillField(row - 1, col + 1, '~');
+                fillField(row + 0, col - 1, '*');
+                fillField(row + 0, col + 0, chr);
+                fillField(row + 0, col + 1, '~');
+                fillField(row + 1, col - 2, '~');
+                fillField(row + 1, col - 1, '~');
+                fillField(row + 1, col + 0, '~');
+                fillField(row + 1, col + 1, '~');
                 break;
             default:
-                fillField(row, col, chr, reset);
+                fillField(row, col, chr);
         }
     }
 
-    private void fillField(int row, int col, char chr, boolean reset) throws Exception {
-        if (reset) chr = ' ';
+    private void fillField(int row, int col, char chr) throws Exception {
         if (start && chr != '~' && chr != ' ') chr = '*';
         if (row < 0 || row >= getMaxRow() || col < 0 || col >= getMaxCol()) {
             return;
         }
         if (getGrid()[row][col] == chr) return;
-        if (getGrid()[row][col] != '\u0000' && getGrid()[row][col] != ' ' && !reset) {
+        if (getGrid()[row][col] != '\u0000' && getGrid()[row][col] != ' ') {
             if (getGrid()[row][col] == '~')
                 throw new Exception("field (" + row + ", " + col + ") is already water and not " + chr);
             if (getGrid()[row][col] == '*' && chr == '~')

@@ -29,8 +29,8 @@ public class Solve {
         this.iteration = iteration;
     }
 
-    public boolean solve(Bimaru bimaru, int row, int col, int ships) {
-        int length = bimaru.getGrid().length;
+    public boolean solve(BattleShip battleShip, int row, int col, int ships) {
+        int length = battleShip.getGrid().length;
 
         if (ships == 0) return true;
 
@@ -43,12 +43,12 @@ public class Solve {
                 if (tryHor) {
                     iteration++;
 
-                    if (bimaru.placeShip(row, col, shipSize, true)) {
+                    if (battleShip.placeShip(row, col, shipSize, true)) {
                         shipCatCounts[i]--;
 
-                        if (solve(bimaru, 0, 0, ships - 1)) return true;
+                        if (solve(battleShip, 0, 0, ships - 1)) return true;
                         else {
-                            bimaru.removeShip(row, col, shipSize, true);
+                            battleShip.removeShip(row, col, shipSize, true);
                             shipCatCounts[i]++;
                         }
                     } else {
@@ -60,12 +60,12 @@ public class Solve {
                 if (tryVer && shipSize > 1) {
                     iteration++;
 
-                    if (bimaru.placeShip(row, col, shipSize, false)) {
+                    if (battleShip.placeShip(row, col, shipSize, false)) {
                         shipCatCounts[i]--;
 
-                        if (solve(bimaru, 0, 0, ships - 1)) return true;
+                        if (solve(battleShip, 0, 0, ships - 1)) return true;
                         else {
-                            bimaru.removeShip(row, col, shipSize, false);
+                            battleShip.removeShip(row, col, shipSize, false);
                             shipCatCounts[i]++;
                         }
                     } else {
@@ -83,6 +83,6 @@ public class Solve {
         }
         if (newRow >= length) return false;
 
-        return solve(bimaru, newRow, newCol, ships);
+        return solve(battleShip, newRow, newCol, ships);
     }
 }

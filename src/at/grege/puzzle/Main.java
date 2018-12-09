@@ -17,115 +17,47 @@ public class Main {
         int col[];
         int shipCatCounts[];
 
-        Bimaru bimaru;
-
-        row = new int[]{6, 1, 3, 2, 2, 2, 3, 1};
-        col = new int[]{5, 0, 2, 4, 2, 3, 0, 4};
-
-        row = new int[]{1, 3, 4, 2, 2, 0, 0, 4, 2, 2};
-        col = new int[]{3, 0, 4, 1, 2, 1, 4, 0, 4, 1};
-
-        row = new int[]{4, 0, 5, 1, 4, 0, 2, 4};
-        col = new int[]{3, 4, 2, 4, 0, 2, 4, 1};
-
-        row = new int[]{1, 3, 2, 3, 2, 2, 0, 6, 0, 1};
-        col = new int[]{1, 1, 4, 0, 1, 5, 0, 3, 2, 3};
-
-        row = new int[]{3, 2, 1, 4, 2, 1, 1, 0, 3, 3};
-        col = new int[]{1, 5, 1, 2, 0, 4, 1, 3, 2, 1};
-
-        shipCatCounts = new int[]{4, 3, 2, 1};
+        BattleShip battleShip;
 
         Collection<ShipPart> shipParts;
 
-        shipParts = new ArrayList<ShipPart>();
-        shipParts.add(new ShipPart(2, 4, '<'));
-//        shipParts.add(new ShipPart(2, 5, '>'));
-        shipParts.add(new ShipPart(6, 0, 'A'));
-//        shipParts.add(new ShipPart(7, 0, 'V'));
-
-//        shipParts.add(new ShipPart(6, 0, '*'));
-//        shipParts.add(new ShipPart(7, 0, '*'));
-//        shipParts.add(new ShipPart(2, 0, '~'));
-//        shipParts.add(new ShipPart(5, 0, '~'));
-//        shipParts.add(new ShipPart(5, 5, '~'));
-
-//        shipParts.add(new ShipPart(0, 0, 'A'));
-//        shipParts.add(new ShipPart(1, 0, 'V'));
-//
-//        shipParts.add(new ShipPart(0, 2, '<'));
-//        shipParts.add(new ShipPart(0, 3, '-'));
-//        shipParts.add(new ShipPart(0, 4, '-'));
-//        shipParts.add(new ShipPart(0, 5, '>'));
-//
-//        shipParts.add(new ShipPart(0, 7, 'O'));
-//
-//        shipParts.add(new ShipPart(2, 2, 'O'));
-//
-//        shipParts.add(new ShipPart(3, 0, 'O'));
-//
-//        shipParts.add(new ShipPart(3, 7, 'A'));
-//        shipParts.add(new ShipPart(4, 7, '|'));
-//        shipParts.add(new ShipPart(5, 7, 'V'));
-//
-//        shipParts.add(new ShipPart(4, 3, 'A'));
-//        shipParts.add(new ShipPart(5, 3, '|'));
-//        shipParts.add(new ShipPart(6, 3, 'V'));
-//
-//        shipParts.add(new ShipPart(6, 5, 'O'));
+        col = new int[]{1,0,1,2,3,4,1,2,3,2};
+        row = new int[]{1,2,1,7,1,1,1,2,2,1,};
 
         shipParts = new ArrayList<ShipPart>();
-        shipParts.add(new ShipPart(0, 2, '~'));
-        shipParts.add(new ShipPart(2, 0, 'A'));
-        shipParts.add(new ShipPart(2, 8, 'A'));
-        shipParts.add(new ShipPart(7, 2, '~'));
+        shipParts.add(new ShipPart(4, 9, 'V'));
+        shipParts.add(new ShipPart(6, 8, 'A'));
 
-        shipParts = new ArrayList<ShipPart>();
-        shipParts.add(new ShipPart(4, 1, '~'));
+        shipCatCounts = new int[]{3, 3, 2, 1};
 
-        shipParts = new ArrayList<ShipPart>();
-        shipParts.add(new ShipPart(3, 5, '~'));
-        shipParts.add(new ShipPart(4, 9, 'A'));
+        battleShip = new BattleShip(row, col, shipCatCounts.length);
 
-        shipParts = new ArrayList<ShipPart>();
-        shipParts.add(new ShipPart(0, 6, '<'));
-        shipParts.add(new ShipPart(0, 9, '~'));
-        shipParts.add(new ShipPart(3, 1, '#'));
-        shipParts.add(new ShipPart(8, 2, '#'));
-        shipParts.add(new ShipPart(0, 1, '~'));
-//        shipParts.add(new ShipPart(0, 8, '~'));
-//        shipParts.add(new ShipPart(1, 3, '~'));
-        shipParts.add(new ShipPart(8, 0, '~'));
-        shipParts.add(new ShipPart(9, 0, '~'));
+        battleShip.initGrid0(true);
 
-        bimaru = new Bimaru(row, col, shipCatCounts.length);
+        battleShip.setStartShipParts(shipParts);
 
-        bimaru.initGrid0(true);
+        battleShip.placeStartParts();
 
-        bimaru.setStartShipParts(shipParts);
-
-        bimaru.placeStartParts();
-
-        printGrid(bimaru);
+        printGrid(battleShip);
 
         int ships = 0;
         for (int cnt : shipCatCounts) ships += cnt;
 
         Solve solve = new Solve(shipCatCounts);
-        if (solve.solve(bimaru, 0, 0, ships)) {
-            printGrid(bimaru);
+        if (solve.solve(battleShip, 0, 0, ships)) {
+            printGrid(battleShip);
         } else {
             System.out.println("No solution found!");
         }
         System.out.println("Iterations: " + solve.getIteration());
     }
 
-    public static void printGrid(Bimaru bimaru) {
-        int maxRow = bimaru.getMaxRow();
-        int maxCol = bimaru.getMaxCol();
-        char[][] grid = bimaru.getGrid();
-        int row[] = bimaru.getRow();
-        int col[] = bimaru.getCol();
+    public static void printGrid(BattleShip battleShip) {
+        int maxRow = battleShip.getMaxRow();
+        int maxCol = battleShip.getMaxCol();
+        char[][] grid = battleShip.getGrid();
+        int row[] = battleShip.getRow();
+        int col[] = battleShip.getCol();
 
         System.out.print("+-");
         for (int i = 0; i < maxRow; i++) {
